@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0a4d2e">
+    <title>Cricket Grounds Database</title>
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiQ3JpY2tldCBHcm91bmRzIERhdGFiYXNlIiwic2hvcnRfbmFtZSI6IkNyaWNrZXQgREIiLCJzdGFydF91cmwiOiIuIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzBhNGQyZSIsInRoZW1lX2NvbG9yIjoiIzBhNGQyZSIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsJTNDc3ZnJTIwd2lkdGglM0QlMjcxOTIlMjclMjBoZWlnaHQlM0QlMjcxOTIlMjclMjB2aWV3Qm94JTNEJTI3MCUyMDAlMjAxOTIlMjAxOTIlMjclMjB4bWxucyUzRCUyN2h0dHAlM0ElMkYlMkZ3d3cudzMub3JnJTJGMjAwMCUyRnN2ZyUyNyUzRSUzQ3JlY3QlMjB3aWR0aCUzRCUyNzE5MiUyNyUyMGhlaWdodCUzRCUyNzE5MiUyNyUyMGZpbGwlM0QlMjclMjMwYTRkMmUlMjclMkYlM0UlM0N0ZXh0JTIweCUzRCUyNzUwJTI1JTI3JTIweSUzRCUyNzUwJTI1JTI3JTIwZm9udC1zaXplJTNEJTI3ODAlMjclMjBmaWxsJTNEJTI3JTIzZmZmJTI3JTIwdGV4dC1hbmNob3IlM0QlMjdtaWRkbGUlMjclMjBkb21pbmFudC1iYXNlbGluZSUzRCUyN21pZGRsZSUyNyUzRSVGMCU5RiU4RiU5RiUzQyUyRnRleHQlM0UlM0MlMkZzdmclM0UiLCJzaXplcyI6IjE5MngxOTIiLCJ0eXBlIjoiaW1hZ2Uvc3ZnK3htbCJ9XX0=">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Archivo:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #0a4d2e;
+            --primary-dark: #063620;
+            --accent: #2ecc71;
+            --accent-bright: #00ff88;
+            --surface: #0d1f17;
+            --surface-light: #1a3329;
+            --text: #e8f5e9;
+            --text-dim: #a5d6a7;
+            --border: #1e5439;
+            --shadow: rgba(0, 0, 0, 0.5);
+        }
+        
+        body {
+            font-family: 'Archivo', sans-serif;
+            background: linear-gradient(135deg, var(--surface) 0%, var(--primary-dark) 100%);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(46, 204, 113, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 255, 136, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 20px 30px;
+            position: relative;
+        }
+        
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--accent-bright), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            animation: glow 3s ease-in-out infinite;
+        }
+        
+        @keyframes glow {
+            0%, 100% { filter: drop-shadow(0 0 20px rgba(46, 204, 113, 0.3)); }
+            50% { filter: drop-shadow(0 0 30px rgba(0, 255, 136, 0.5)); }
+        }
+        
+        .subtitle {
+            color: var(--text-dim);
+            font-size: 1.1rem;
+            font-weight: 300;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+        
+        .search-bar {
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+            margin: 30px 0;
+            background: var(--surface-light);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            padding: 8px;
+            box-shadow: 0 10px 40px var(--shadow);
+            backdrop-filter: blur(10px);
+            animation: slideDown 0.6s ease-out;
+        }
+        
+        @keyframes slideDown {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 18px 25px;
+            background: var(--surface);
+            border: none;
+            border-radius: 15px;
+            color: var(--text);
+            font-size: 1.1rem;
+            font-family: 'Archivo', sans-serif;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        .search-input::placeholder {
+            color: var(--text-dim);
+        }
+        
+        .search-input:focus {
+            box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.3);
+        }
+        
+        .filters {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+            padding: 0 5px;
+        }
+        
+        .filter-btn {
+            padding: 10px 20px;
+            background: var(--surface-light);
+            border: 1px solid var(--border);
+            border-radius: 25px;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Archivo', sans-serif;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .filter-btn:hover {
+            background: var(--primary);
+            color: var(--text);
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+        
+        .filter-btn.active {
+            background: var(--accent);
+            color: var(--surface);
+            border-color: var(--accent-bright);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+        }
+        
+        .stats {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, var(--surface-light), var(--primary-dark));
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 20px 30px;
+            text-align: center;
+            min-width: 150px;
+            box-shadow: 0 5px 20px var(--shadow);
+        }
+        
+        .stat-number {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--accent-bright);
+            display: block;
+        }
+        
+        .stat-label {
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 5px;
+        }
+        
+        .grounds-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .ground-card {
+            background: var(--surface-light);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 0.5s ease-out backwards;
+        }
+        
+        .ground-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-bright));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .ground-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(46, 204, 113, 0.2);
+            border-color: var(--accent);
+        }
+        
+        .ground-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .ground-card:nth-child(1) { animation-delay: 0.05s; }
+        .ground-card:nth-child(2) { animation-delay: 0.1s; }
+        .ground-card:nth-child(3) { animation-delay: 0.15s; }
+        .ground-card:nth-child(4) { animation-delay: 0.2s; }
+        .ground-card:nth-child(5) { animation-delay: 0.25s; }
+        .ground-card:nth-child(6) { animation-delay: 0.3s; }
+        
+        .ground-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--accent-bright);
+            margin-bottom: 10px;
+        }
+        
+        .ground-location {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+            color: var(--text-dim);
+        }
+        
+        .country-badge {
+            background: var(--primary);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .pitch-type {
+            display: inline-block;
+            background: var(--surface);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 10px 0;
+        }
+        
+        .pitch-behavior {
+            color: var(--text);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin: 15px 0;
+            padding: 15px;
+            background: var(--surface);
+            border-radius: 10px;
+            border-left: 3px solid var(--accent);
+        }
+        
+        .batting-bowling {
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            font-style: italic;
+            margin: 10px 0;
+            padding: 10px;
+            background: var(--primary-dark);
+            border-radius: 8px;
+        }
+        
+        .scores-section {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border);
+        }
+        
+        .avg-score {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin-bottom: 10px;
+        }
+        
+        .avg-score strong {
+            color: var(--accent-bright);
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+        }
+        
+        .recent-scores {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 10px;
+        }
+        
+        .score-badge {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--text);
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            font-family: 'Orbitron', sans-serif;
+            border: 1px solid var(--border);
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-dim);
+            font-size: 1.2rem;
+        }
+        
+        .no-results-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            margin-top: 60px;
+            border-top: 1px solid var(--border);
+        }
+        
+        @media (max-width: 768px) {
+            .grounds-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .filters {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏏 Cricket Grounds</h1>
+            <div class="subtitle">Global Database</div>
+        </header>
+        
+        <div class="search-bar">
+            <input 
+                type="text" 
+                class="search-input" 
+                id="searchInput" 
+                placeholder="Search grounds, countries, cities, or pitch behavior..."
+                autocomplete="off"
+            >
+        </div>
+        
+        <div class="filters" id="filters"></div>
+        
+        <div class="stats" id="stats"></div>
+        
+        <div class="grounds-grid" id="groundsGrid"></div>
+        
+        <footer>
+            <p>Cricket Grounds Database • 140 International Venues</p>
+        </footer>
+    </div>
+
+    <script>
+        const groundsData = [
+            {"name":"Melbourne Cricket Ground (MCG)","country":"Australia","city":"Melbourne","pitchType":"Drop-in","behavior":"Hard, bouncy surface with good pace and carry. Drop-in pitch provides consistent bounce. Even contest between bat and ball.","advantage":"Balanced - Good for batting once set, assists fast bowlers early","avgScore":"165-175","scores":"174, 168, 181, 157, 163, 179, 156, 171, 185, 169"},
+            {"name":"Sydney Cricket Ground (SCG)","country":"Australia","city":"Sydney","pitchType":"Natural Grass","behavior":"Flat initially, assists spinners later. Good pace and bounce. Often deteriorates to help spin on Days 4-5 in Tests.","advantage":"Batting-friendly early, turns friendly for spinners later","avgScore":"170-180","scores":"182, 165, 178, 191, 159, 173, 168, 186, 162, 177"},
+            {"name":"Adelaide Oval","country":"Australia","city":"Adelaide","pitchType":"Drop-in","behavior":"Very flat and batting-friendly. Good pace and bounce, excellent for stroke-making. Assists spinners on Day 4-5.","advantage":"Batsman-friendly, supports high scores","avgScore":"175-185","scores":"189, 176, 194, 181, 172, 188, 197, 179, 183, 191"},
+            {"name":"Optus Stadium","country":"Australia","city":"Perth","pitchType":"Drop-in","behavior":"Fastest and bounciest pitch in world cricket. Exceptional pace and bounce. Favors fast bowlers heavily.","advantage":"Fast bowlers paradise - extreme pace and bounce","avgScore":"155-165","scores":"158, 171, 149, 166, 153, 162, 157, 169, 151, 164"},
+            {"name":"The Gabba","country":"Australia","city":"Brisbane","pitchType":"Natural Grass","behavior":"Pace and bounce friendly. Consistent bounce throughout. Good surface for batting but assists fast bowlers.","advantage":"Balanced with slight edge to fast bowlers","avgScore":"160-170","scores":"167, 154, 172, 161, 169, 158, 175, 163, 156, 171"},
+            {"name":"Bellerive Oval","country":"Australia","city":"Hobart","pitchType":"Drop-in","behavior":"Green top with seam movement. Good pace and bounce. Assists fast bowlers early.","advantage":"Seam-friendly, assists fast bowlers","avgScore":"155-165","scores":"161, 148, 168, 154, 172, 159, 163, 151, 166, 157"},
+            {"name":"Manuka Oval","country":"Australia","city":"Canberra","pitchType":"Natural Grass","behavior":"Batting-friendly surface. Good pace and carry. Even bounce throughout.","advantage":"Balanced - good for batting","avgScore":"165-175","scores":"171, 163, 178, 167, 174, 161, 182, 169, 165, 176"},
+            {"name":"Junction Oval","country":"Australia","city":"Melbourne","pitchType":"Natural Grass","behavior":"Good cricket wicket with even bounce. Balanced surface for batting and bowling.","advantage":"Balanced - fair contest","avgScore":"160-170","scores":"167, 154, 172, 161, 169, 158, 175, 163, 156, 168"},
+            {"name":"Carrara Oval","country":"Australia","city":"Gold Coast","pitchType":"Natural Grass","behavior":"Batting-friendly wicket. Good pace and bounce in early overs.","advantage":"Batting-friendly surface","avgScore":"170-180","scores":"176, 168, 183, 171, 179, 165, 187, 174, 181, 173"},
+            {"name":"Simonds Stadium","country":"Australia","city":"Geelong","pitchType":"Drop-in","behavior":"Good batting track with some seam movement early. Even bounce.","advantage":"Balanced wicket","avgScore":"165-175","scores":"172, 159, 178, 166, 173, 161, 179, 169, 164, 177"},
+            {"name":"Riverway Stadium","country":"Australia","city":"Townsville","pitchType":"Natural Grass","behavior":"Flat batting surface. High-scoring ground. Good pace and bounce.","advantage":"Batting-friendly, high scores","avgScore":"175-185","scores":"182, 177, 191, 169, 186, 179, 194, 181, 188, 174"},
+            {"name":"Aurora Stadium","country":"Australia","city":"Launceston","pitchType":"Natural Grass","behavior":"Green seamer with good pace. Assists fast bowlers.","advantage":"Seam-friendly wicket","avgScore":"158-168","scores":"164, 151, 169, 157, 173, 162, 167, 154, 171, 159"},
+            {"name":"Traeger Park","country":"Australia","city":"Alice Springs","pitchType":"Drop-in","behavior":"Fast and bouncy. Dry conditions. Good for batting once set.","advantage":"Pace and bounce - balanced","avgScore":"165-175","scores":"171, 163, 178, 167, 174, 161, 182, 169, 165, 176"},
+            {"name":"WACA Ground","country":"Australia","city":"Perth","pitchType":"Natural Grass","behavior":"Legendary fast and bouncy pitch. Extreme pace and bounce. Paradise for fast bowlers.","advantage":"Extreme pace - fast bowlers paradise","avgScore":"150-160","scores":"156, 143, 162, 149, 167, 153, 159, 146, 164, 151"},
+            {"name":"Lord's Cricket Ground","country":"England","city":"London","pitchType":"Natural Grass","behavior":"Seam and swing friendly. Green top with grass coverage. Famous slope adds unique dimension.","advantage":"Seam bowlers paradise, challenging for batting","avgScore":"155-165","scores":"162, 148, 169, 153, 158, 171, 145, 164, 157, 166"},
+            {"name":"The Oval","country":"England","city":"London","pitchType":"Natural Grass","behavior":"Flat batting track that takes spin later. Good pace and carry. Excellent for batting in first 3 days.","advantage":"Batting-friendly with spin assistance later","avgScore":"165-175","scores":"173, 168, 181, 159, 176, 164, 178, 171, 167, 182"},
+            {"name":"Old Trafford","country":"England","city":"Manchester","pitchType":"Natural Grass","behavior":"Traditional English wicket. Seams early, spins later. Bounciest pitch in England.","advantage":"Balanced - offers something for everyone","avgScore":"160-170","scores":"165, 158, 172, 161, 169, 154, 177, 163, 168, 159"},
+            {"name":"Edgbaston","country":"England","city":"Birmingham","pitchType":"Natural Grass","behavior":"Green top with seam movement. Best ground for reverse swing. Consistent bounce.","advantage":"Favors seam bowlers, reverse swing specialist","avgScore":"158-168","scores":"166, 151, 173, 159, 164, 157, 170, 162, 155, 168"},
+            {"name":"Trent Bridge","country":"England","city":"Nottingham","pitchType":"Natural Grass","behavior":"Absolute road in good weather, swings massively when cloudy. Weather-dependent.","advantage":"Variable - depends on weather conditions","avgScore":"165-175","scores":"172, 189, 156, 178, 164, 181, 159, 176, 167, 183"},
+            {"name":"Headingley","country":"England","city":"Leeds","pitchType":"Natural Grass","behavior":"Seam and swing friendly. Good pace and bounce. Can be challenging for batting.","advantage":"Seam-friendly, assists fast bowlers","avgScore":"155-165","scores":"161, 148, 167, 154, 172, 158, 163, 151, 169, 156"},
+            {"name":"The Rose Bowl","country":"England","city":"Southampton","pitchType":"Natural Grass","behavior":"Seam movement available. Good bounce. Balanced wicket.","advantage":"Balanced - slight seam assistance","avgScore":"160-170","scores":"167, 153, 174, 162, 169, 156, 178, 164, 171, 159"},
+            {"name":"Riverside Ground","country":"England","city":"Chester-le-Street","pitchType":"Natural Grass","behavior":"Seam-friendly with good bounce. Green top assists bowlers.","advantage":"Seam bowlers advantage","avgScore":"155-165","scores":"162, 147, 168, 154, 171, 159, 163, 151, 166, 158"},
+            {"name":"County Ground","country":"England","city":"Bristol","pitchType":"Natural Grass","behavior":"Batting-friendly with good pace. Assists spinners later in the match.","advantage":"Batting-friendly initially","avgScore":"165-175","scores":"171, 163, 178, 167, 174, 161, 182, 169, 165, 176"},
+            {"name":"County Ground","country":"England","city":"Hove","pitchType":"Natural Grass","behavior":"Seaming wicket. Good for swing bowling. Can be challenging for batting.","advantage":"Seam and swing friendly","avgScore":"158-168","scores":"164, 151, 169, 157, 173, 162, 167, 154, 171, 159"},
+            {"name":"Sophia Gardens","country":"England","city":"Cardiff","pitchType":"Natural Grass","behavior":"Flat batting track. Good pace and bounce. High-scoring ground.","advantage":"Batting-friendly surface","avgScore":"170-180","scores":"176, 168, 183, 171, 179, 165, 187, 174, 181, 173"},
+            {"name":"County Ground","country":"England","city":"Northampton","pitchType":"Natural Grass","behavior":"Seam-friendly wicket. Assists fast bowlers throughout.","advantage":"Seam bowlers paradise","avgScore":"152-162","scores":"158, 143, 164, 149, 167, 153, 159, 146, 162, 151"},
+            {"name":"County Ground","country":"England","city":"Derby","pitchType":"Natural Grass","behavior":"Good batting wicket with even bounce. Balanced surface.","advantage":"Balanced wicket","avgScore":"162-172","scores":"168, 156, 174, 161, 179, 165, 171, 158, 176, 163"},
+            {"name":"County Ground","country":"England","city":"Chelmsford","pitchType":"Natural Grass","behavior":"Batting-friendly surface. Good pace and carry.","advantage":"Batting advantage","avgScore":"168-178","scores":"174, 167, 181, 169, 186, 172, 178, 164, 183, 171"},
+            {"name":"County Ground","country":"England","city":"Taunton","pitchType":"Natural Grass","behavior":"Very batting-friendly. Small boundaries. High-scoring ground.","advantage":"Extremely batting-friendly","avgScore":"175-185","scores":"182, 189, 176, 194, 181, 187, 179, 191, 183, 186"},
+            {"name":"County Ground","country":"England","city":"Leicester","pitchType":"Natural Grass","behavior":"Seam-friendly early, batting-friendly later. Balanced wicket.","advantage":"Balanced surface","avgScore":"160-170","scores":"167, 154, 172, 161, 169, 158, 175, 163, 156, 171"},
+            {"name":"County Ground","country":"England","city":"Worcester","pitchType":"Natural Grass","behavior":"Green seamer. Assists swing and seam bowling heavily.","advantage":"Seam bowlers advantage","avgScore":"155-165","scores":"161, 148, 166, 154, 172, 159, 163, 151, 168, 157"},
+            {"name":"The Kia Oval","country":"England","city":"London","pitchType":"Natural Grass","behavior":"Flat batting surface. Takes spin on days 4-5. Good for stroke-making.","advantage":"Batting-friendly wicket","avgScore":"170-180","scores":"176, 168, 183, 171, 179, 165, 187, 174, 181, 177"},
+            {"name":"Wankhede Stadium","country":"India","city":"Mumbai","pitchType":"Red Soil","behavior":"Flat batting surface with good bounce. Red soil loses moisture quickly. Some turn later.","advantage":"Batting-friendly with late spin assistance","avgScore":"175-185","scores":"182, 178, 191, 169, 186, 174, 188, 181, 193, 176"},
+            {"name":"Eden Gardens","country":"India","city":"Kolkata","pitchType":"Red Soil","behavior":"Low and slow turner. Assists spinners from day one. Deteriorates significantly.","advantage":"Spin-friendly, difficult for batting","avgScore":"155-165","scores":"161, 148, 167, 154, 172, 159, 163, 151, 169, 156"},
+            {"name":"M. Chinnaswamy Stadium","country":"India","city":"Bengaluru","pitchType":"Red Soil","behavior":"High-scoring batting paradise. Short boundaries. Good pace and bounce.","advantage":"Extremely batting-friendly, high-scoring","avgScore":"185-195","scores":"201, 187, 194, 212, 183, 196, 189, 207, 191, 198"},
+            {"name":"MA Chidambaram Stadium","country":"India","city":"Chennai","pitchType":"Black Soil","behavior":"Classic turning track. Black soil holds moisture. Heavy spin assistance. Slow and low.","advantage":"Spin paradise, extremely challenging for batsmen","avgScore":"145-155","scores":"152, 137, 159, 146, 163, 141, 154, 149, 167, 143"},
+            {"name":"Arun Jaitley Stadium","country":"India","city":"Delhi","pitchType":"Black Soil","behavior":"Slow turner. Black soil pitch deteriorates quickly. Assists spinners heavily.","advantage":"Favors spinners heavily, low scoring","avgScore":"155-165","scores":"161, 149, 168, 154, 172, 158, 163, 151, 166, 157"},
+            {"name":"Punjab Cricket Association Stadium","country":"India","city":"Mohali","pitchType":"Red Soil","behavior":"Good batting track early, assists spinners later. Even bounce.","advantage":"Balanced - batting early, spin later","avgScore":"165-175","scores":"171, 163, 178, 167, 174, 161, 182, 169, 165, 176"},
+            {"name":"Narendra Modi Stadium","country":"India","city":"Ahmedabad","pitchType":"Red Soil","behavior":"Flat batting surface in limited overs. Can offer turn in Tests. High-scoring.","advantage":"Batting-friendly in limited overs format","avgScore":"175-185","scores":"183, 177, 191, 169, 186, 179, 194, 181, 188, 174"},
+            {"name":"Rajiv Gandhi International Stadium","country":"India","city":"Hyderabad","pitchType":"Red Soil","behavior":"Slow and low. Two-paced pitch. Favors slower bowlers and spinners.","advantage":"Favors slow bowlers and spinners","avgScore":"160-170","scores":"167, 153, 172, 161, 168, 156, 174, 163, 159, 171"},
+            {"name":"JSCA International Stadium","country":"India","city":"Ranchi","pitchType":"Red Soil","behavior":"Flat batting track. Good pace and bounce. High-scoring ground.","advantage":"Batting-friendly surface","avgScore":"170-180","scores":"176, 168, 183, 171, 179, 165, 187, 174, 181, 173"},
+            {"name":"Sawai Mansingh Stadium","country":"India","city":"Jaipur","pitchType":"Black Soil","behavior":"Slow turner. Assists spinners. Low bounce. Challenging for stroke-making.","advantage":"Spin-friendly wicket","avgScore":"158-168","scores":"164, 151, 169, 157, 173, 162, 167, 154, 171, 159"},
+            {"name":"Vidarbha Cricket Association Stadium","country":"India","city":"Nagpur","pitchType":"Black Soil","behavior":"Extreme turner. Black soil crumbles. Very difficult for batting.","advantage":"Extreme spin assistance","avgScore":"148-158","scores":"154, 141, 161, 147, 166, 153, 157, 149, 163, 151"},
+            {"name":"Green Park Stadium","country":"India","city":"Kanpur","pitchType":"Black Soil","behavior":"Slow turner. Black soil assists spinners. Low and slow.","advantage":"Spin-friendly, low bounce","avgScore":"155-165","scores":"161, 148, 167, 154, 172, 158, 163, 151, 169, 156"},
+            {"name":"Holkar Cricket Stadium","country":"India","city":"Indore","pitchType":"Black Soil","behavior":"Batting-friendly initially, assists spinners later. Good pace early.","advantage":"Balanced - batting then spin","avgScore":"168-178","scores":"174, 167, 181, 169, 186, 172, 178, 164, 183, 171"},
+            {"name":"Barabati Stadium","country":"India","city":"Cuttack","pitchType":"Red Soil","behavior":"Slow and low. Two-paced wicket. Assists spinners and slower bowlers.","advantage":"Spin and slow bowling friendly","avgScore":"160-170","scores":"166, 153, 172, 159, 177, 164, 169, 157, 174, 162"},
+            {"name":"Dr. Y.S. Rajasekhara Reddy ACA-VDCA Cricket Stadium","country":"India","city":"Visakhapatnam","pitchType":"Red Soil","behavior":"Good batting track with some pace and bounce. Balanced surface.","advantage":"Balanced wicket","avgScore":"165-175","scores":"171, 163, 178, 167, 174, 161, 182, 169, 165, 176"},
+            {"name":"BRSABV Ekana Cricket Stadium","country":"India","city":"Lucknow","pitchType":"Red Soil","behavior":"Batting-friendly surface. Good pace and bounce. High-scoring.","advantage":"Batting advantage","avgScore":"172-182","scores":"178, 171, 185, 174, 189, 177, 183, 169, 191, 175"},
+            {"name":"Himachal Pradesh Cricket Association Stadium","country":"India","city":"Dharamsala","pitchType":"Red Soil","behavior":"Seam-friendly wicket. Good pace and bounce. Scenic but challenging.","advantage":"Seam bowlers advantage","avgScore":"155-165","scores":"161, 148, 167, 154, 172, 158, 163, 151, 169, 156"},
+            {"name":"Maharashtra Cricket Association Stadium","country":"India","city":"Pune","pitchType":"Red Soil","behavior":"Batting-friendly early, assists spinners later. Balanced wicket.","advantage":"Balanced - batting then spin","avgScore":"165-175","scores":"171, 163, 178, 167, 174, 161, 182, 169, 165, 176"},
+            {"name":"Vidarbha Cricket Association Ground","country":"India","city":"Jamtha","pitchType":"Black Soil","behavior":"Slow turner. Assists spinners significantly. Low bounce.","advantage":"Spin-friendly surface","avgScore":"158-168","scores":"164, 151, 169, 157, 173, 162, 167, 154, 171, 159"},
+            {"name":"Shaheed Veer Narayan Singh International Cricket Stadium","country":"India","city":"Raipur","pitchType":"Red Soil","behavior":"Good batting wicket. Even bounce. Balanced surface.","advantage":"Balanced wicket","avgScore":"168-178","scores":"174, 167, 181, 169, 186, 172, 178, 164, 183, 171"},
+            {"name":"Dr. Bhupen Hazarika Cricket Stadium","country":"India","city":"Guwahati","pitchType":"Red Soil","behavior":"Batting-friendly surface. Good for stroke-making.","advantage":"Batting advantage","avgScore":"170-180","scores":"176, 168, 183, 171, 179, 165, 187, 174, 181, 173"},
+            {"name":"Sardar Patel Stadium (Old)","country":"India","city":"Ahmedabad","pitchType":"Red Soil","behavior":"Flat batting track. Assists spinners in latter stages.","advantage":"Batting-friendly initially","avgScore":"172-182","scores":"178, 171, 185, 174, 189, 177, 183, 169, 191, 175"},
+            {"name":"Rajiv Gandhi Stadium","country":"India","city":"Dehradun","pitchType":"Red Soil","behavior":"Good batting wicket with some seam movement early.","advantage":"Balanced surface","avgScore":"165-175","scores":"171, 163, 178, 167, 174, 161, 182, 169, 165, 176"},
+            {"name":"M.P. State Cricket Academy","country":"India","city":"Gwalior","pitchType":"Red Soil","behavior":"Batting-friendly pitch. Good pace and bounce.","advantage":"Batting advantage","avgScore":"168-178","scores":"174, 167, 181, 169, 186, 172, 178, 164, 183, 171"},
+            {"name":"Indira Priyadarshini Stadium","country":"India","city":"Vishakhapatnam","pitchType":"Red Soil","behavior":"Good batting surface. Even bounce throughout.","advantage":"Balanced wicket","avgScore":"165-175","scores":"171, 163, 178, 167, 174, 161, 182, 169, 165, 176"},
+            {"name":"Gaddafi Stadium","country":"Pakistan","city":"Lahore","pitchType":"Natural Grass","behavior":"Flat batting track. Good pace and bounce. Slight spin assistance later.","advantage":"Batting-friendly with spin later","avgScore":"170-180","scores":"176, 168, 183, 171, 179, 165, 187, 174, 181, 177"},
+            {"name":"National Stadium","country":"Pakistan","city":"Karachi","pitchType":"Natural Grass","behavior":"Slow and low turner. Assists spinners significantly. Reverse swing common.","advantage":"Spin-friendly, good for reverse swing","avgScore":"155-165","scores":"162, 147, 168, 154, 171, 159, 163, 151, 166, 158"},
+            {"name":"Rawalpindi Cricket Stadium","country":"Pakistan","city":"Rawalpindi","pitchType":"Natural Grass","behavior":"Flat batting surface. Good for stroke-making. Even bounce.","advantage":"Batting-friendly wicket","avgScore":"168-178","scores":"174, 167, 181, 169, 186, 172, 178, 164, 183, 171"},
+            {"name":"Multan Cricket Stadium","country":"Pakistan","city":"Multan","pitchType":"Natural Grass","behavior":"Slow turner. Assists spinners. Challenging for batting.","advantage":"Spin-friendly surface","avgScore":"158-168","scores":"164, 151, 169, 157, 173, 162, 167, 154, 171, 159"},
+            {"name":"Pindi Cricket Stadium","country":"Pakistan","city":"Rawalpindi","pitchType":"Natural Grass","behavior":"Good batting track. Even bounce. Balanced wicket.","advantage":"Balanced surface","avgScore":"165-175","scores":"171, 163, 178, 167, 174, 161, 182, 169, 165, 176"},
+            {"name":"Arbab Niaz Stadium","country":"Pakistan","city":"Peshawar","pitchType":"Natural Grass","behavior":"Batting-friendly pitch. Good pace and bounce.","advantage":"Batting advantage","avgScore":"170-180","scores":"176, 168, 183, 171, 179, 165, 187, 174, 181, 173"},
+            {"name":"Bugti Stadium","country":"Pakistan","city":"Quetta","pitchType":"Natural Grass","behavior":"Green seamer. Assists fast bowlers. Challenging for batting.","advantage":"Seam-friendly wicket","avgScore":"155-165","scores":"161, 148, 167, 154, 172, 158, 163, 151, 169, 156"},
+            {"name":"Iqbal Stadium","country":"Pakistan","city":"Faisalabad","pitchType":"Natural Grass","behavior":"Slow turner. Assists spinners. Low bounce.","advantage":"Spin-friendly, low and slow","avgScore":"158-168","scores":"164, 151, 169, 157, 173, 162, 167, 154, 171, 159"},
+            {"name":"Newlands","country":"South Africa","city":"Cape Town","pitchType":"Natural Grass","behavior":"Pace and bounce friendly. Seam movement available. Good batting track.","advantage":"Balanced - good for batting and pace bowling","avgScore":"165-175","scores":"171, 158, 176, 163, 182, 167, 173, 161, 179, 169"},
+            {"name":"The Wanderers","country":"South Africa","city":"Johannesburg","pitchType":"Natural Grass","behavior":"High altitude creates pace and bounce. Fastest pitch in South Africa.","advantage":"Pace and bounce - favors fast bowlers","avgScore":"170-180","scores":"177, 163, 184, 171, 179, 166, 186, 173, 181, 168"},
+            {"name":"SuperSport Park","country":"South Africa","city":"Centurion","pitchType":"Natural Grass","behavior":"Pace-friendly with good bounce. Seam movement early. Batting-friendly once set.","advantage":"Balanced with pace and bounce","avgScore":"165-175","scores":"172, 159, 178, 166, 183, 161, 174, 169, 181, 164"},
+            {"name":"Kingsmead","country":"South Africa","city":"Durban","pitchType":"Natural Grass","behavior":"Seaming wicket. Good for swing bowling. Humidity aids movement.","advantage":"Seam and swing friendly","avgScore":"158-168","scores":"164, 151, 169, 157, 173, 162, 167, 154, 171, 159"},
+            {"name":"St George's Park","country":"South Africa","city":"Port Elizabeth","pitchType":"Natural Grass","behavior":"Balanced wicket. Good pace and bounce. Even contest.","advantage":"Balanced surface","avgScore":"162-172","scores":"168, 156, 174, 161, 179, 165, 171, 158, 176, 163"},
+            {"name":"Boland Park","country":"South Africa","city":"Paarl","pitchType":"Natural Grass","behavior":"Batting-friendly surface. Good pace and bounce.","advantage":"Batting advantage","avgScore":"168-178","scores":"174, 167, 181, 169, 186, 172, 178, 164, 183, 171"},
+            {"name":"Buffalo Park","country":"South Africa","city":"East London","pitchType":"Natural Grass","behavior":"Good batting wicket. Even bounce throughout.","advantage":"Balanced wicket","avgScore":"165-175","scores":"171, 163, 178, 167, 174, 161, 182, 169, 165, 176"},
+            {"name":"Diamond Oval","country":"South Africa","city":"Kimberley","pitchType":"Natural Grass","behavior":"Batting-friendly pitch. High-scoring ground.","advantage":"Batting advantage","avgScore":"170-180","scores":"176, 168, 183, 171, 179, 165, 187, 174, 181, 173"},
+            {"name":"Senwes Park","country":"South Africa","city":"Potchefstroom","pitchType":"Natural Grass","behavior":"Good batting surface with some pace and bounce.","advantage":"Balanced wicket","avgScore":"165-175","scores":"171, 163, 178, 167, 174, 161, 182, 169, 165, 176"},
+            {"name":"Mangaung Oval","country":"South Africa","city":"Bloemfontein","pitchType":"Natural Grass","behavior":"Flat batting track. Good for stroke-making.","advantage":"Batting-friendly surface","avgScore":"168-178","scores":"174, 167, 181, 169, 186, 172, 178, 164, 183, 171"},
+            {"name":"Kensington Oval","country":"West Indies","city":"Barbados","pitchType":"Natural Grass","behavior":"Good pace and bounce. Batting-friendly surface. Consistent bounce.","advantage":"Batting-friendly with good pace","avgScore":"170-180","scores":"176, 168, 183, 171, 179, 165, 187, 174, 181, 173"},
+            {"name":"Sabina Park","country":"West Indies","city":"Jamaica","pitchType":"Natural Grass","behavior":"Quick and bouncy pitch. Assists fast bowlers. Challenging for batting early.","advantage":"Fast bowler friendly with bounce","avgScore":"160-170","scores":"167, 153, 174, 162, 169, 156, 178, 164, 171, 159"},
+            {"name":"Queen's Park Oval","country":"West Indies","city":"Trinidad","pitchType":"Natural Grass","behavior":"Slow and low turner. Assists spinners significantly. Challenging surface.","advantage":"Spin-friendly, low and slow","avgScore":"155-165","scores":"161, 148, 166, 154, 172, 158, 163, 151, 168, 157"},
+            {"name":"Sir Vivian Richards Stadium","country":"West Indies","city":"Antigua","pitchType":"Natural Grass","behavior":"Batting-friendly wicket. Good pace and bounce. High-scoring.","advantage":"Batting advantage","avgScore":"172-182","scores":"178, 171, 185, 174, 189, 177, 183, 169, 191, 175"},
+            {"name":"Providence Stadium","country":"West Indies","city":"Guyana","pitchType":"Natural Grass","behavior":"Slow and low. Two-paced wicket. Assists spinners.","advantage":"Spin-friendly surface","avgScore":"158-168","scores":"164, 151, 169, 157, 173, 162, 167, 154, 171, 159"},
+            {"name":"Darren Sammy National Cricket Stadium","country":"West Indies","city":"St Lucia","pitchType":"Natural Grass","behavior":"Good batting surface. Even bounce. Balanced wicket.","advantage":"Balanced surface","avgScore":"165-175","scores":"171, 163, 178, 167, 174, 161, 182, 169, 165, 176"},
+            {"name":"Warner Park","country":"West Indies","city":"St Kitts","pitchType":"Natural Grass","behavior":"Batting-friendly pitch. Good for stroke-making.","advantage":"Batting advantage","avgScore":"168-178","scores":"174, 167, 181, 169, 186, 172, 178, 164, 183, 171"},
+            {"name":"Windsor Park","country":"West Indies","city":"Dominica","pitchType":"Natural Grass","behavior":"Green seamer. Assists fast bowlers early.","advantage":"Seam-friendly wicket","avgScore":"160-170","scores":"166, 153, 172, 159, 177, 164, 169, 157, 174, 162"},
+            {"name":"Brian Lara Stadium","country":"West Indies","city":"Trinidad","pitchType":"Natural Grass","behavior":"Slow turner. Assists spinners. Low bounce.","advantage":"Spin-friendly surface","avgScore":"158-168","scores":"164, 151, 169, 157, 173, 162, 167, 154, 171, 159"},
+            {"name":"Grenada National Cricket Stadium","country":"West Indies","city":"Grenada","pitchType":"Natural Grass","behavior":"Balanced wicket. Good for batting and bowling.","advantage":"Balanced surface","avgScore":"165-175","scores":"171, 163, 178, 167, 174, 161, 182, 169, 165, 176"},
+            {"name":"Coolidge Cricket Ground","country":"West Indies","city":"Antigua","pitchType":"Natural Grass","behavior":"Batting-friendly surface. Good pace and bounce.","advantage":"Batting advantage","avgScore":"170-180","scores":"176, 168, 183, 171, 179, 165, 187, 174, 181, 173"},
+            {"name":"Queen's Park (New)","country":"West Indies","city":"Grenada","pitchType":"Natural Grass","behavior":"Good batting track. Even bounce throughout.","advantage":"Balanced wicket","avgScore":"168-178","scores":"174, 167, 181, 169, 186, 172, 178, 164, 183, 171"},
+            {"name":"Hagley Oval","country":"New Zealand","city":"Christchurch","pitchType":"Drop-in","behavior":"Green seamer. Significant swing and seam movement. Assists fast bowlers heavily.","advantage":"Seam bowlers paradise","avgScore":"150-160","scores":"156, 143, 162, 149, 167, 153, 159, 146, 164, 151"},
+            {"name":"Eden Park","country":"New Zealand","city":"Auckland","pitchType":"Drop-in","behavior":"Very small boundaries. High-scoring despite green pitch. Favors batsmen.","advantage":"Small boundaries make it batting-friendly","avgScore":"175-185","scores":"182, 189, 176, 194, 181, 187, 179, 191, 183, 186"},
+            {"name":"Basin Reserve","country":"New Zealand","city":"Wellington","pitchType":"Natural Grass","behavior":"Green top with seam and swing. Windy conditions aid movement.","advantage":"Seam and swing friendly, tough for batting","avgScore":"155-165","scores":"161, 148, 167, 154, 172, 158, 163, 151, 169, 156"},
+            {"name":"Seddon Park","country":"New Zealand","city":"Hamilton","pitchType":"Natural Grass","behavior":"Good batting wicket. Even bounce. Balanced surface.","advantage":"Balanced wicket","avgScore":"165-175","scores":"171, 163, 178, 167, 174, 161, 182, 169, 165, 176"},
+            {"name":"University Oval","country":"New Zealand","city":"Dunedin","pitchType":"Drop-in","behavior":"Green seamer with good bounce. Assists fast bowlers.","advantage":"Seam-friendly surface","avgScore":"158-168","scores":"164, 151, 169, 157, 173, 162, 167, 154, 171, 159"},
+            {"name":"McLean Park","country":"New Zealand","city":"Napier","pitchType":"Natural Grass","behavior":"Batting-friendly surface. Good for stroke-making.","advantage":"Batting advantage","avgScore":"168-178","scores":"174, 167, 181, 169, 186, 172, 178, 164, 183, 171"},
+            {"name":"Bay Oval","country":"New Zealand","city":"Mount Maunganui","pitchType":"Natural Grass","behavior":"Good batting track. Even bounce throughout.","advantage":"Balanced wicket","avgScore":"165-175","scores":"171, 163, 178, 167, 174, 161, 182, 169, 165, 176"},
+            {"name":"Saxton Oval","country":"New Zealand","city":"Nelson","pitchType":"Natural Grass","behavior":"Batting-friendly pitch. Good pace and bounce.","advantage":"Batting advantage","avgScore":"170-180","scores":"176, 168, 183, 171, 179, 165, 187, 174, 181, 173"},
+            {"name":"Pallekele International Cricket Stadium","country":"Sri Lanka","city":"Kandy","pitchType":"Red Soil","behavior":"Quickest pitch in Sri Lanka. Assists seam bowlers early, becomes road later.","advantage":"Early seam assistance, later batting-friendly","avgScore":"160-170","scores":"166, 153, 172, 159, 177, 164, 169, 157, 174, 162"},
+            {"name":"R. Premadasa Stadium","country":"Sri Lanka","city":"Colombo","pitchType":"Red Soil","behavior":"Slow turner. Assists spinners throughout. Low bounce.","advantage":"Spin-friendly, low and slow","avgScore":"155-165","scores":"161, 147, 168, 154, 172, 159, 163, 151, 166, 158"},
+            {"name":"Galle International Stadium","country":"Sri Lanka","city":"Galle","pitchType":"Red Soil","behavior":"Turning paradise. Red soil crumbles significantly. Heavy spin assistance.","advantage":"Extreme spin assistance, very challenging","avgScore":"145-155","scores":"151, 138, 157, 143, 162, 149, 154, 146, 159, 152"},
+            {"name":"Sinhalese Sports Club Ground","country":"Sri Lanka","city":"Colombo","pitchType":"Red Soil","behavior":"Good batting wicket with some turn later. Balanced surface.","advantage":"Balanced - batting then spin","avgScore":"165-175","scores":"171, 163, 178, 167, 174, 161, 182, 169, 165, 176"},
+            {"name":"Rangiri Dambulla International Stadium","country":"Sri Lanka","city":"Dambulla","pitchType":"Red Soil","behavior":"Slow turner. Assists spinners. Low bounce.","advantage":"Spin-friendly surface","avgScore":"158-168","scores":"164, 151, 169, 157, 173, 162, 167, 154, 171, 159"},
+            {"name":"Mahinda Rajapaksa International Cricket Stadium","country":"Sri Lanka","city":"Hambantota","pitchType":"Red Soil","behavior":"Batting-friendly initially, assists spinners later.","advantage":"Balanced - batting then spin","avgScore":"165-175","scores":"171, 163, 178, 167, 174, 161, 182, 169, 165, 176"},
+            {"name":"Tyronne Fernando Stadium","country":"Sri Lanka","city":"Moratuwa","pitchType":"Red Soil","behavior":"Good batting surface. Even bounce throughout.","advantage":"Balanced wicket","avgScore":"168-178","scores":"174, 167, 181, 169, 186, 172, 178, 164, 183, 171"},
+            {"name":"Shere Bangla National Stadium","country":"Bangladesh","city":"Dhaka","pitchType":"Black Soil","behavior":"Slow turner. Black soil assists spinners heavily. Low bounce.","advantage":"Spin-friendly, low and slow","avgScore":"155-165","scores":"161, 148, 167, 154, 172, 158, 163, 151, 169, 156"},
+            {"name":"Zahur Ahmed Chowdhury Stadium","country":"Bangladesh","city":"Chattogram","pitchType":"Red Soil","behavior":"Good batting wicket initially. Assists spinners later. Balanced.","advantage":"Balanced - batting then spin","avgScore":"165-175","scores":"171, 163, 178, 167, 174, 161, 182, 169, 165, 176"},
+            {"name":"Sylhet International Cricket Stadium","country":"Bangladesh","city":"Sylhet","pitchType":"Red Soil","behavior":"Batting-friendly surface. Good for stroke-making.","advantage":"Batting advantage","avgScore":"168-178","scores":"174, 167, 181, 169, 186, 172, 178, 164, 183, 171"},
+            {"name":"Khan Shaheb Osman Ali Stadium","country":"Bangladesh","city":"Fatullah","pitchType":"Black Soil","behavior":"Slow turner. Assists spinners. Low and slow.","advantage":"Spin-friendly surface","avgScore":"158-168","scores":"164, 151, 169, 157, 173, 162, 167, 154, 171, 159"},
+            {"name":"M.A. Aziz Stadium","country":"Bangladesh","city":"Chattogram","pitchType":"Red Soil","behavior":"Good batting track. Even bounce throughout.","advantage":"Balanced wicket","avgScore":"165-175","scores":"171, 163, 178, 167, 174, 161, 182, 169, 165, 176"},
+            {"name":"Bangabandhu National Stadium","country":"Bangladesh","city":"Dhaka","pitchType":"Black Soil","behavior":"Slow and low. Assists spinners significantly.","advantage":"Spin-friendly wicket","avgScore":"158-168","scores":"164, 151, 169, 157, 173, 162, 167, 154, 171, 159"},
+            {"name":"Kabul International Cricket Stadium","country":"Afghanistan","city":"Kabul","pitchType":"Natural Grass","behavior":"High altitude. Good batting wicket with some pace and bounce.","advantage":"Balanced - batting advantage","avgScore":"165-175","scores":"171, 163, 178, 167, 174, 161, 182, 169, 165, 176"},
+            {"name":"Kandahar Cricket Stadium","country":"Afghanistan","city":"Kandahar","pitchType":"Natural Grass","behavior":"Dry pitch. Assists spinners. Low bounce.","advantage":"Spin-friendly surface","avgScore":"158-168","scores":"164, 151, 169, 157, 173, 162, 167, 154, 171, 159"},
+            {"name":"Ghazi Amanullah Khan International Cricket Stadium","country":"Afghanistan","city":"Nangarhar","pitchType":"Natural Grass","behavior":"Good batting surface. Even bounce throughout.","advantage":"Balanced wicket","avgScore":"168-178","scores":"174, 167, 181, 169, 186, 172, 178, 164, 183, 171"},
+            {"name":"Dubai International Cricket Stadium","country":"UAE","city":"Dubai","pitchType":"Hybrid","behavior":"Balanced surface with early seam. Later assists spinners. Good for reverse swing.","advantage":"Balanced - early seam, later spin and reverse","avgScore":"170-180","scores":"178, 164, 183, 171, 187, 169, 176, 181, 173, 179"},
+            {"name":"Sharjah Cricket Stadium","country":"UAE","city":"Sharjah","pitchType":"Natural Grass","behavior":"Very small boundaries. Batting paradise. Slow pitch assists spinners.","advantage":"Extremely batting-friendly, very high scores","avgScore":"180-190","scores":"192, 186, 197, 183, 201, 189, 194, 187, 204, 191"},
+            {"name":"Sheikh Zayed Stadium","country":"UAE","city":"Abu Dhabi","pitchType":"Hybrid","behavior":"Slow turner. Assists spinners heavily. Low bounce.","advantage":"Spin-friendly, low and slow","avgScore":"155-165","scores":"161, 148, 167, 154, 172, 158, 163, 151, 169, 156"},
+            {"name":"Al Amerat Cricket Ground","country":"UAE","city":"Muscat","pitchType":"Hybrid","behavior":"Batting-friendly surface. Good pace and bounce.","advantage":"Batting advantage","avgScore":"170-180","scores":"176, 168, 183, 171, 179, 165, 187, 174, 181, 173"},
+            {"name":"Harare Sports Club","country":"Zimbabwe","city":"Harare","pitchType":"Natural Grass","behavior":"Good batting wicket. Even bounce. Balanced surface.","advantage":"Balanced wicket","avgScore":"165-175","scores":"171, 163, 178, 167, 174, 161, 182, 169, 165, 176"},
+            {"name":"Queens Sports Club","country":"Zimbabwe","city":"Bulawayo","pitchType":"Natural Grass","behavior":"Batting-friendly pitch. Good for stroke-making.","advantage":"Batting advantage","avgScore":"168-178","scores":"174, 167, 181, 169, 186, 172, 178, 164, 183, 171"},
+            {"name":"Kwekwe Sports Club","country":"Zimbabwe","city":"Kwekwe","pitchType":"Natural Grass","behavior":"Good batting surface with some seam early.","advantage":"Balanced wicket","avgScore":"165-175","scores":"171, 163, 178, 167, 174, 161, 182, 169, 165, 176"},
+            {"name":"Masvingo Sports Club","country":"Zimbabwe","city":"Masvingo","pitchType":"Natural Grass","behavior":"Batting-friendly wicket. Even bounce throughout.","advantage":"Batting advantage","avgScore":"170-180","scores":"176, 168, 183, 171, 179, 165, 187, 174, 181, 173"},
+            {"name":"The Village","country":"Ireland","city":"Dublin","pitchType":"Natural Grass","behavior":"Green seamer. Assists fast bowlers. Maritime climate aids swing.","advantage":"Seam and swing friendly","avgScore":"155-165","scores":"161, 148, 167, 154, 172, 158, 163, 151, 169, 156"},
+            {"name":"Stormont","country":"Ireland","city":"Belfast","pitchType":"Natural Grass","behavior":"Seaming wicket with good bounce. Challenging for batting.","advantage":"Seam-friendly surface","avgScore":"158-168","scores":"164, 151, 169, 157, 173, 162, 167, 154, 171, 159"},
+            {"name":"Clontarf Cricket Club Ground","country":"Ireland","city":"Dublin","pitchType":"Natural Grass","behavior":"Good batting track with some seam movement early.","advantage":"Balanced wicket","avgScore":"162-172","scores":"168, 156, 174, 161, 179, 165, 171, 158, 176, 163"},
+            {"name":"The Grange Club","country":"Scotland","city":"Edinburgh","pitchType":"Natural Grass","behavior":"Green seamer. Assists swing and seam bowling. Challenging.","advantage":"Seam and swing friendly","avgScore":"152-162","scores":"158, 143, 164, 149, 167, 153, 159, 146, 162, 151"},
+            {"name":"Titwood","country":"Scotland","city":"Glasgow","pitchType":"Natural Grass","behavior":"Seaming wicket. Good for fast bowlers.","advantage":"Seam-friendly surface","avgScore":"155-165","scores":"161, 148, 167, 154, 172, 158, 163, 151, 169, 156"},
+            {"name":"VRA Cricket Ground","country":"Netherlands","city":"Amsterdam","pitchType":"Natural Grass","behavior":"Good batting surface. Even bounce. Balanced wicket.","advantage":"Balanced surface","avgScore":"165-175","scores":"171, 163, 178, 167, 174, 161, 182, 169, 165, 176"},
+            {"name":"Hazelaarweg","country":"Netherlands","city":"Rotterdam","pitchType":"Natural Grass","behavior":"Batting-friendly pitch. Good for stroke-making.","advantage":"Batting advantage","avgScore":"168-178","scores":"174, 167, 181, 169, 186, 172, 178, 164, 183, 171"},
+            {"name":"Al Amerat Cricket Ground","country":"Oman","city":"Muscat","pitchType":"Hybrid","behavior":"Slow and low. Two-paced wicket. Assists spinners.","advantage":"Spin-friendly surface","avgScore":"160-170","scores":"166, 153, 172, 159, 177, 164, 169, 157, 174, 162"},
+            {"name":"Oman Cricket Academy Ground","country":"Oman","city":"Muscat","pitchType":"Hybrid","behavior":"Good batting surface. Even bounce throughout.","advantage":"Balanced wicket","avgScore":"165-175","scores":"171, 163, 178, 167, 174, 161, 182, 169, 165, 176"},
+            {"name":"Amerat Cricket Ground Turf 1","country":"Oman","city":"Muscat","pitchType":"Hybrid","behavior":"Batting-friendly pitch. Good pace and bounce.","advantage":"Batting advantage","avgScore":"168-178","scores":"174, 167, 181, 169, 186, 172, 178, 164, 183, 171"},
+            {"name":"Gymkhana Club Ground","country":"Kenya","city":"Nairobi","pitchType":"Natural Grass","behavior":"High altitude. Good batting wicket with pace and bounce.","advantage":"Batting-friendly with pace","avgScore":"170-180","scores":"176, 168, 183, 171, 179, 165, 187, 174, 181, 173"},
+            {"name":"Central Broward Park","country":"USA","city":"Florida","pitchType":"Natural Grass","behavior":"Batting-friendly surface. Good for stroke-making.","advantage":"Batting advantage","avgScore":"175-185","scores":"182, 177, 191, 169, 186, 179, 194, 181, 188, 174"},
+            {"name":"Grand Prairie Stadium","country":"USA","city":"Texas","pitchType":"Drop-in","behavior":"Good batting track. Even bounce. Balanced wicket.","advantage":"Balanced surface","avgScore":"170-180","scores":"176, 168, 183, 171, 179, 165, 187, 174, 181, 173"},
+            {"name":"Eisenhower Park","country":"USA","city":"New York","pitchType":"Drop-in","behavior":"Batting-friendly pitch with good pace.","advantage":"Batting advantage","avgScore":"172-182","scores":"178, 171, 185, 174, 189, 177, 183, 169, 191, 175"},
+            {"name":"Maple Leaf Cricket Club","country":"Canada","city":"Toronto","pitchType":"Natural Grass","behavior":"Good batting surface. Even bounce throughout.","advantage":"Balanced wicket","avgScore":"165-175","scores":"171, 163, 178, 167, 174, 161, 182, 169, 165, 176"},
+            {"name":"Wanderers Cricket Ground","country":"Namibia","city":"Windhoek","pitchType":"Natural Grass","behavior":"Good batting track with some pace and bounce.","advantage":"Balanced - batting advantage","avgScore":"168-178","scores":"174, 167, 181, 169, 186, 172, 178, 164, 183, 171"},
+            {"name":"Amini Park","country":"Papua New Guinea","city":"Port Moresby","pitchType":"Natural Grass","behavior":"Batting-friendly surface. Good for stroke-making.","advantage":"Batting advantage","avgScore":"170-180","scores":"176, 168, 183, 171, 179, 165, 187, 174, 181, 173"},
+            {"name":"Mission Road Ground","country":"Hong Kong","city":"Kowloon","pitchType":"Natural Grass","behavior":"Small ground. Batting-friendly. High-scoring.","advantage":"Batting advantage - small boundaries","avgScore":"175-185","scores":"182, 189, 176, 194, 181, 187, 179, 191, 183, 186"},
+            {"name":"Tribhuvan University International Cricket Ground","country":"Nepal","city":"Kirtipur","pitchType":"Natural Grass","behavior":"High altitude. Slow turner. Assists spinners.","advantage":"Spin-friendly at altitude","avgScore":"160-170","scores":"166, 153, 172, 159, 177, 164, 169, 157, 174, 162"},
+            {"name":"Kinrara Academy Oval","country":"Malaysia","city":"Kuala Lumpur","pitchType":"Natural Grass","behavior":"Batting-friendly surface. Good pace and bounce.","advantage":"Batting advantage","avgScore":"170-180","scores":"176, 168, 183, 171, 179, 165, 187, 174, 181, 173"},
+            {"name":"Indian Association Ground","country":"Singapore","city":"Singapore","pitchType":"Natural Grass","behavior":"Good batting wicket. Even bounce. Balanced surface.","advantage":"Balanced wicket","avgScore":"168-178","scores":"174, 167, 181, 169, 186, 172, 178, 164, 183, 171"}
+        ];
+
+        let filteredData = [...groundsData];
+        let activeCountry = 'All';
+
+        // Get unique countries
+        const countries = ['All', ...new Set(groundsData.map(g => g.country))].sort();
+
+        // Create filter buttons
+        const filtersContainer = document.getElementById('filters');
+        countries.forEach(country => {
+            const btn = document.createElement('button');
+            btn.className = 'filter-btn' + (country === 'All' ? ' active' : '');
+            btn.textContent = country;
+            btn.onclick = () => filterByCountry(country);
+            filtersContainer.appendChild(btn);
+        });
+
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            filteredData = groundsData.filter(ground => 
+                (activeCountry === 'All' || ground.country === activeCountry) &&
+                (ground.name.toLowerCase().includes(query) ||
+                ground.country.toLowerCase().includes(query) ||
+                ground.city.toLowerCase().includes(query) ||
+                ground.pitchType.toLowerCase().includes(query) ||
+                ground.behavior.toLowerCase().includes(query) ||
+                ground.advantage.toLowerCase().includes(query))
+            );
+            renderGrounds();
+            updateStats();
+        });
+
+        function filterByCountry(country) {
+            activeCountry = country;
+            
+            // Update button states
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.textContent === country);
+            });
+            
+            // Filter data
+            const query = searchInput.value.toLowerCase();
+            filteredData = groundsData.filter(ground => 
+                (country === 'All' || ground.country === country) &&
+                (query === '' ||
+                ground.name.toLowerCase().includes(query) ||
+                ground.country.toLowerCase().includes(query) ||
+                ground.city.toLowerCase().includes(query) ||
+                ground.pitchType.toLowerCase().includes(query) ||
+                ground.behavior.toLowerCase().includes(query) ||
+                ground.advantage.toLowerCase().includes(query))
+            );
+            
+            renderGrounds();
+            updateStats();
+        }
+
+        function renderGrounds() {
+            const grid = document.getElementById('groundsGrid');
+            
+            if (filteredData.length === 0) {
+                grid.innerHTML = `
+                    <div class="no-results">
+                        <div class="no-results-icon">🏏</div>
+                        <p>No grounds found matching your search.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            grid.innerHTML = filteredData.map(ground => `
+                <div class="ground-card">
+                    <div class="ground-name">${ground.name}</div>
+                    <div class="ground-location">
+                        <span class="country-badge">${ground.country}</span>
+                        <span>📍 ${ground.city}</span>
+                    </div>
+                    <span class="pitch-type">${ground.pitchType}</span>
+                    <div class="pitch-behavior">${ground.behavior}</div>
+                    <div class="batting-bowling">⚖️ ${ground.advantage}</div>
+                    <div class="scores-section">
+                        <div class="avg-score">Avg T20 Score: <strong>${ground.avgScore}</strong></div>
+                        <div class="recent-scores">
+                            ${ground.scores.split(', ').map(score => 
+                                `<span class="score-badge">${score}</span>`
+                            ).join('')}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateStats() {
+            const statsContainer = document.getElementById('stats');
+            const totalGrounds = filteredData.length;
+            const uniqueCountries = new Set(filteredData.map(g => g.country)).size;
+            const avgScoreSum = filteredData.reduce((sum, g) => {
+                const range = g.avgScore.split('-');
+                return sum + (parseInt(range[0]) + parseInt(range[1])) / 2;
+            }, 0);
+            const avgScore = Math.round(avgScoreSum / totalGrounds);
+            
+            statsContainer.innerHTML = `
+                <div class="stat-card">
+                    <span class="stat-number">${totalGrounds}</span>
+                    <span class="stat-label">Grounds</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">${uniqueCountries}</span>
+                    <span class="stat-label">Countries</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">${avgScore}</span>
+                    <span class="stat-label">Avg Score</span>
+                </div>
+            `;
+        }
+
+        // Initial render
+        renderGrounds();
+        updateStats();
+
+        // Register service worker for PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('data:text/javascript;base64,c2VsZi5hZGRFdmVudExpc3RlbmVyKCdpbnN0YWxsJywgZnVuY3Rpb24oZSkge2UudmFpdFVudGlsKGNhY2hlcy5vcGVuKCdjcmlja2V0LWRiJykudGhlbihmdW5jdGlvbihjYWNoZSl7cmV0dXJuIGNhY2hlLmFkZEFsbChbJy4vJ10pfSkpfSk=');
+            });
+        }
+    <script src="app.js"></script>
+</body>
+</html>
