@@ -1,3 +1,4 @@
+alert("app.js is running");
 const matchesDiv = document.getElementById("matches");
 
 // TEMP DEMO DATA (so app always works)
